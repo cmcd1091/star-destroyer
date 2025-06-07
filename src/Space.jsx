@@ -1,13 +1,23 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Star from "./Star";
 
 const Space = () => {
   const [stars, setStars] = useState([]);
-  const [nextId, setNextId] = useState(0);
+  const [autoMode, setAutoMode] = useState(false)
+  const nextId = useRef(0);
   const addStar = () => {
     setStars([...stars, {x: posX(), y: posY(), id: nextId}]);
-    setNextId(nextId + 1);
   }
+
+  useEffect(() => {
+    if (!autoMode) return;
+    const interval = setInterval(() => {
+      const id = nextId.current++;
+      setStars(stars => [...stars, {x: posX(), y: posY(), id}]);
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [autoMode])
 
   const posX = () => Math.floor(Math.random() * 100);
   const posY = () => Math.floor(Math.random() * 100);
@@ -21,7 +31,9 @@ const Space = () => {
       {stars.map(({ x, y, id }) => (
         <Star posX={x} posY={y} key={id} id={id} destroy={destroy}/>
       ))}
-      <button onClick={addStar}>add star</button>
+      <button onClick={() => setAutoMode(prev => !prev)}>
+        {autoMode ? "Stop stars" : "Start stars"}
+      </button>
     </div>
   )
 
