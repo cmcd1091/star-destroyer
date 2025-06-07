@@ -5,15 +5,12 @@ const Space = () => {
   const [stars, setStars] = useState([]);
   const [autoMode, setAutoMode] = useState(false)
   const nextId = useRef(0);
-  const addStar = () => {
-    setStars([...stars, {x: posX(), y: posY(), id: nextId}]);
-  }
 
   useEffect(() => {
     if (!autoMode) return;
     const interval = setInterval(() => {
       const id = nextId.current++;
-      setStars(stars => [...stars, {x: posX(), y: posY(), id}]);
+      setStars(prevStars => [...prevStars, {x: posX(), y: posY(), id}]);
     }, 2500);
 
     return () => clearInterval(interval);
